@@ -1,0 +1,33 @@
+{% extends 'base.html' %}{% load static %} {% block content %}
+<h1 class="earth-h1">Welcome to Earth News</h1>
+<p class="earth-p">
+  Earth News is a platform where you can read news articles about everything
+  Earth
+</p>
+
+<h5 class="earth-h5">
+  Latest News
+  <p>Click <a href="{% url 'account_login' %}">Login</a> to see more news</p>
+</h5>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+  {% for news in articles %}
+  <a href="{% url 'article' news.id %}" class="text-decoration-none text-dark">
+    <div class="col">
+      <div class="card text-bg-dark">
+        <img
+          src="media/{{news.image}}"
+          class="card-img custom-card-img"
+          alt="..."
+        />
+
+        <div class="card-img-overlay">
+          <h5 class="card-title">{{news.title}}</h5>
+          <p class="card-text">{{news.content | truncatewords:30}}</p>
+          <p class="card-text"><small>{{ news.date }}</small></p>
+        </div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

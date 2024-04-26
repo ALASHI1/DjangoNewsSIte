@@ -1,0 +1,109 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Latest News</h1>
+  <div id="articles-container" class="row row-cols-1 row-cols-md-2 g-4">
+    {% for news in articles %}
+    <div class="col">
+      <div class="card custom-card">
+        <a
+          href="{% url 'article' news.id %}"
+          class="text-decoration-none text-dark"
+        >
+          <img
+            src="{{news.image.url}}"
+            class="card-img-top custom-card-img"
+            alt="News Image"
+          />
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{news.title}}</h5>
+          <p class="card-text">{{news.content | truncatewords:30}}</p>
+          <div class="news-tags">
+            {% for tag in news.tags.all %}
+            <a href="{% url 'articles_by_tag' tag.name %}">
+              <span class="badge bg-secondary">{{ tag.name }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  let pageNumber = 0;
+  let isLoading = false;
+
+  window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      loadMoreArticles();
+    }
+  });
+
+  function loadMoreArticles() {
+    if (isLoading) return;
+    isLoading = true;
+
+    fetch(`/feed?limit=${pageNumber}`)
+      .then((response) => response.json())
+      .then((data) => {
+        displayArticles(data.articles);
+        pageNumber += 3;
+        isLoading = false;
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+        isLoading = false;
+      });
+  }
+
+  function displayArticles(articles) {
+    const articlesContainer = document.getElementById("articles-container");
+    articles.forEach((article) => {
+      const articleElement = document.createElement("div");
+      articleElement.classList.add("col");
+      articleElement.innerHTML = `
+        <div class="card custom-card">
+          <a href="article/${
+            article.pk
+          }" class="text-decoration-none text-dark">
+            <img src="media/${
+              article.fields.image
+            }" class="card-img-top custom-card-img" alt="News Image" />
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">${article.fields.title}</h5>
+            <p class="card-text" id="truncatedContent">${truncateContent(
+              article.fields.content
+            )} </p>
+            <div class="news-tags">
+              ${article.fields.tags
+                .map(
+                  (tag) => `
+                <a href="/tag/${tag}">
+                  <span class="badge bg-secondary">${tag}</span>
+                </a>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+        </div>
+      `;
+      articlesContainer.appendChild(articleElement);
+    });
+  }
+
+  loadMoreArticles(); // Initial load
+  function truncateContent(content) {
+    const words = content.split(" ");
+    if (words.length > 30) {
+      return words.slice(0, 30).join(" ") + "..."; // Truncate to 30 words and add ellipsis
+    } else {
+      return content;
+    }
+  }
+</script>
+{% endblock %}

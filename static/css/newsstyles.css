@@ -1,0 +1,34 @@
+.earth-h1 {
+  text-align: center;
+  font-size: 2.5em;
+  margin-top: 5%;
+}
+
+.earth-p {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.earth-h5 {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 5%;
+}
+
+.earth-h5 p {
+  font-size: 1em;
+}
+
+.custom-card-img {
+  min-height: 520px !important;
+  object-fit: cover;
+}
+
+.custom-card {
+  min-height: 700px;
+}
+
+.news-tags span.badge {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
